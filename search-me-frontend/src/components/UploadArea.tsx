@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { Upload, X, AlertCircle } from 'lucide-react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
+import { Upload, Camera } from 'lucide-react';
 import { useImage } from '../context/ImageContext';
 import { toast } from 'sonner';
 import { API_BASE_URL } from '../App';
@@ -16,6 +16,9 @@ const UploadArea: React.FC = () => {
   
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [stream, setStream] = useState<MediaStream | null>(null);
   
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -55,14 +58,55 @@ const UploadArea: React.FC = () => {
       processFile(file);
     }
   }, []);
+
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setStream(mediaStream);
+      setShowCamera(true);
+    } catch (err) {
+      toast.error('Failed to access camera. Please make sure you have granted camera permissions.');
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream]);
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setShowCamera(false);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      canvas.getContext('2d')?.drawImage(videoRef.current, 0, 0);
+      
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
+          processFile(file);
+        }
+      }, 'image/jpeg');
+      
+      stopCamera();
+    }
+  };
   
   const processFile = async (file: File) => {
-    // Set loading state and show file preview
     setIsLoading(true);
     setError(null);
     setUploadProgress(0);
     
-    // Create FileReader for image preview
     const reader = new FileReader();
     reader.onload = (e) => {
       if (e.target?.result) {
@@ -71,12 +115,10 @@ const UploadArea: React.FC = () => {
     };
     reader.readAsDataURL(file);
     
-    // Create form data for upload
     const formData = new FormData();
     formData.append('image', file);
 
     try {
-      // Simulate progress (in a real implementation, you would use fetch with XMLHttpRequest for progress)
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev === null) return 10;
@@ -88,7 +130,6 @@ const UploadArea: React.FC = () => {
         });
       }, 300);
 
-      // Send to API
       const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         body: formData,
@@ -104,7 +145,6 @@ const UploadArea: React.FC = () => {
       const data = await response.json();
       
       if (data.status === 'success') {
-        console.log(data.data);
         setS3Url(data.data.s3_url);
         setProductDetails(data.data.product_details);
         setSearchResults(data.data.search_results);
@@ -142,26 +182,52 @@ const UploadArea: React.FC = () => {
         </div>
       )}
       
-      <div className="flex flex-col items-center justify-center space-y-4">
-        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
-          <Upload className="h-8 w-8 text-primary" />
-        </div>
-        <div className="text-center space-y-2">
-          <h3 className="text-xl font-semibold">Upload Product Image</h3>
-          <p className="text-muted-foreground">
-            Drag and drop an image here, or click to select
-          </p>
-        </div>
-        <label className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer">
-          <span>Select Image</span>
-          <input 
-            type="file" 
-            className="hidden"
-            accept="image/*" 
-            onChange={handleFileSelect} 
+      {showCamera ? (
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full max-w-md rounded-lg"
           />
-        </label>
-      </div>
+          <div className="flex gap-4">
+            <button
+              onClick={capturePhoto}
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+            >
+              Take Photo
+            </button>
+            <button
+              onClick={stopCamera}
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+            <Upload className="h-8 w-8 text-primary" />
+          </div>
+          <h3 className="text-xl font-semibold">Upload Product Image</h3>
+          <p className="text-muted-foreground">Drag and drop an image here, or click to select</p>
+          <div className="flex gap-4">
+            <label className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer">
+              <span>Select Image</span>
+              <input type="file" className="hidden" accept="image/*" onChange={handleFileSelect} />
+            </label>
+            <button
+              onClick={startCamera}
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/90 h-10 px-4 py-2"
+            >
+              <Camera className="h-4 w-4 mr-2" />
+              Use Camera
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
