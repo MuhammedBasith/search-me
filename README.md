@@ -8,7 +8,7 @@ Welcome to SearchMe! Ever seen a product you liked – maybe in a photo, on the 
 
 **GitHub Repository:** [https://github.com/MuhammedBasith/search-me](https://github.com/MuhammedBasith/search-me) 
 
-** Try it live:** [searchme.basith.me](https://searchme.basith.me)  
+**Try it live:** [searchme.basith.me](https://searchme.basith.me)  
 
 ## 🤔 What Does It Do? (Features)
 
