@@ -6,7 +6,8 @@ Welcome to SearchMe! Ever seen a product you liked – maybe in a photo, on the 
 
 **Just upload an image, and SearchMe will use AI to figure out what the product is and then automatically hunt it down on popular Indian e-commerce sites like Amazon, Flipkart, and Myntra, showing you prices and links.**
 
-**GitHub Repository:** [https://github.com/MuhammedBasith/search-me](https://github.com/MuhammedBasith/search-me)
+**GitHub Repository:** [https://github.com/MuhammedBasith/search-me](https://github.com/MuhammedBasith/search-me) 
+**🔍 Try it live:** [searchme.basith.me](https://searchme.basith.me)  
 
 ## 🤔 What Does It Do? (Features)
 
@@ -59,35 +60,6 @@ This project uses modern technologies for both the brain (backend) and the face 
 *   **UI Components:** shadcn/ui (beautiful, reusable components built on Radix UI and Tailwind)
 *   **Data Fetching:** TanStack Query (React Query) (for managing API requests, caching, and state)
 *   **Routing:** React Router DOM (for handling navigation between pages)
-
----
-
-## 📁 Project Structure
-
-
-search-me/
-├── search-me-backend/ # Node.js/Express backend code
-│ ├── server.js # Main server entry point
-│ ├── .env.example # Example environment variables
-│ ├── config/ # Configuration for external services (AWS, Gemini, Firecrawl)
-│ ├── controllers/ # Handles incoming requests and sends responses
-│ ├── routes/ # Defines the API endpoints (like /api/upload)
-│ ├── services/ # Core logic (interacting with Gemini, Firecrawl)
-│ └── ...
-└── search-me-frontend/ # React/Vite frontend code
-├── public/ # Static assets
-├── src/ # Main source code
-│ ├── App.tsx # Root application component
-│ ├── main.tsx # Entry point for React
-│ ├── components/ # Reusable UI components (Header, UploadArea, ResultsDisplay)
-│ ├── pages/ # Top-level page components (Home, About)
-│ ├── context/ # React Context for state management (if any)
-│ ├── hooks/ # Custom React Hooks
-│ └── lib/ # Utility functions
-├── index.html # Main HTML file
-├── vite.config.ts # Vite configuration
-├── tailwind.config.ts # Tailwind CSS configuration
-└── .env.example # Example environment variables
 
 ---
 
@@ -188,9 +160,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Happy Searching! ✨
 
 
-
-License Badge: Added a simple MIT license badge at the top.
-
-GitHub Link: Included the repository link prominently.
-
-Remember to replace the placeholder [Insert Screenshot/GIF...] with an actual visual representation of your application!
