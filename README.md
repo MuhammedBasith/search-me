@@ -7,6 +7,7 @@ Welcome to SearchMe! Ever seen a product you liked – maybe in a photo, on the 
 **Just upload an image, and SearchMe will use AI to figure out what the product is and then automatically hunt it down on popular Indian e-commerce sites like Amazon, Flipkart, and Myntra, showing you prices and links.**
 
 **GitHub Repository:** [https://github.com/MuhammedBasith/search-me](https://github.com/MuhammedBasith/search-me) 
+
 **🔍 Try it live:** [searchme.basith.me](https://searchme.basith.me)  
 
 ## 🤔 What Does It Do? (Features)
