@@ -111,7 +111,7 @@ const refineProductData = async (crawledData, productName) => {
     Here is the text from Amazon:
     ${amazonData}
     
-    Example Output Format(only return the json array dont return anything else):
+    Example Output Format(only return the json array dont return anything else, STRICTLY JSON):
     
     [
       {
@@ -130,7 +130,7 @@ const refineProductData = async (crawledData, productName) => {
     Here is the text from Flipkart:
     ${flipkartData}
     
-    Example Output Format(only return the json array dont return anything else):
+    Example Output Format(only return the json array dont return anything else STRICTLY JSON):
     
     [
       {
@@ -149,7 +149,7 @@ const refineProductData = async (crawledData, productName) => {
     Here is the text from Myntra:
     ${myntraData}
     
-    Example Output Format(only return the json array dont return anything else):
+    Example Output Format(only return the json array dont return anything else STRICTLY JSON):
     
     [
       {
