@@ -24,7 +24,6 @@ const uploadToS3 = async (fileBuffer, fileName) => {
     Key: fileName,
     Body: fileBuffer,
     ContentType: 'image/jpeg', // Adjust based on file type if needed
-    ACL: 'public-read', // Make the file publicly accessible
   };
 
   const uploadResult = await s3.upload(params).promise();
