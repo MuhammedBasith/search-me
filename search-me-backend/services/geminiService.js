@@ -69,6 +69,14 @@ const identifyProduct = async (imageUrl) => {
     return JSON.parse(text);
   } catch (error) {
     console.error('Error in Gemini product identification:', error);
+    // Check for Gemini overload error
+    if (
+      error.message &&
+      error.message.includes('model is overloaded')
+    ) {
+      // Send a recognizable error string for the frontend
+      throw new Error('GEMINI_MODEL_OVERLOADED');
+    }
     throw new Error('Failed to process image with Gemini API');
   }
 };
@@ -222,4 +230,4 @@ const refineProductData = async (crawledData, productName) => {
   }
 };
 
-export { identifyProduct, refineProductData }; 
+export { identifyProduct, refineProductData };
