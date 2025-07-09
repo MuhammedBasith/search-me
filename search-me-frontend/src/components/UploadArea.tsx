@@ -139,7 +139,13 @@ const UploadArea: React.FC = () => {
       setUploadProgress(100);
       
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        // Try to parse error message from backend
+        let errorMsg = `Error: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          if (errorData?.message) errorMsg = errorData.message;
+        } catch {}
+        throw new Error(errorMsg);
       }
       
       const data = await response.json();
@@ -156,7 +162,19 @@ const UploadArea: React.FC = () => {
     } catch (err) {
       setIsLoading(false);
       setError(err instanceof Error ? err.message : 'Failed to upload image');
-      toast.error('Failed to process image. Please try again.');
+      // Custom Gemini overload error handling
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      if (
+        errorMsg.includes('AI model is currently overloaded') ||
+        errorMsg.includes('GEMINI_MODEL_OVERLOADED')
+      ) {
+        toast.info(
+          "Our AI model (Gemini) is currently overloaded due to high demand. Please try again in a few minutes.",
+          { duration: 5000 }
+        );
+      } else {
+        toast.error('Failed to process image. Please try again.');
+      }
       console.error(err);
     }
   };
