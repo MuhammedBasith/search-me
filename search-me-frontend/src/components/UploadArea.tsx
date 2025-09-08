@@ -4,6 +4,56 @@ import { useImage } from '../context/ImageContext';
 import { toast } from 'sonner';
 import { API_BASE_URL } from '../App';
 
+// Dummy response data for when backend is down
+const dummyResponse = {
+  s3_url: '/nike-shoe.jpg',
+  product_details: {
+    name: 'Nike Air Max 270',
+    description: 'Men\'s Running Shoes with visible Air cushioning for all-day comfort',
+    brand: 'Nike',
+    category: 'Running Shoes',
+    confidence: 0.95,
+    color: ['White', 'Black', 'University Red'],
+    material: 'Mesh and Synthetic',
+    attributes: {
+      size: 'US 10',
+      style: 'Athletic',
+      'Sole Material': 'Rubber',
+      'Closure': 'Lace-Up',
+      'Shoe Width': 'Medium',
+      'Model': 'AR6670-100'
+    }
+  },
+  search_results: {
+    products: [
+      {
+        title: 'Nike Air Max 270 - White/Black/University Red',
+        image_url: './nike-shoe-2.jpg',
+        price: '₹15,495',
+        mrp: '₹16,495',
+        url: 'https://www.amazon.in/NIKE-Mens-Air-Black-White/dp/B078X1CGNP/ref=sr_1_5?th=1&psc=1',
+        source: 'Amazon'
+      },
+      {
+        title: 'Nike Air Max 270 - White/Black/University Red',
+        image_url: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/skwgyqrbfzhu6uyeh0gg/air-max-270-mens-shoes-KkLcGR.png',
+        price: '₹16,495',
+        mrp: '₹16,495',
+        url: 'https://www.nike.com/in/t/air-max-270-shoes-V4DfZQ/AH6789-006',
+        source: 'Nike'
+      },
+      {
+        title: 'Nike Air Max 270 - White/Black/University Red',
+        image_url: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcQajRrAH6pPQqjHUzsRiTxrPBA9QfLECpSA13R3fO_LQSuFPioEDbtENonT0wY2LAJxQw7r4QmPBsR-ublc0dwbw9Db_vaDm658fKbTuT8MAb2jQCfPpOMpsfI',
+        price: '₹13,999',
+        mrp: '₹16,495',
+        url: 'https://www.ebay.co.uk/b/bn_7118620162',
+        source: 'eBay'
+      }
+    ]
+  }
+};
+
 const UploadArea: React.FC = () => {
   const { 
     setImage, 
@@ -161,21 +211,20 @@ const UploadArea: React.FC = () => {
       }
     } catch (err) {
       setIsLoading(false);
-      setError(err instanceof Error ? err.message : 'Failed to upload image');
-      // Custom Gemini overload error handling
       const errorMsg = err instanceof Error ? err.message : String(err);
-      if (
-        errorMsg.includes('AI model is currently overloaded') ||
-        errorMsg.includes('GEMINI_MODEL_OVERLOADED')
-      ) {
-        toast.info(
-          "Our AI model (Gemini) is currently overloaded due to high demand. Please try again in a few minutes.",
-          { duration: 5000 }
-        );
-      } else {
-        toast.error('Failed to process image. Please try again.');
-      }
-      console.error(err);
+      setError(errorMsg);
+      
+      // Show friendly message for backend errors
+      toast.info(
+        "We're really sorry, but we've had to temporarily take down our backend services due to high AWS, Firecrawl, and LLM costs. We're working hard to bring them back online soon. In the meantime, here's a dummy response to show you how the results would look.",
+        { duration: 10000 }
+      );
+      
+      // Set dummy data to show the UI flow
+      setS3Url(dummyResponse.s3_url);
+      setProductDetails(dummyResponse.product_details);
+      setSearchResults(dummyResponse.search_results);
+      console.log('Showing dummy response due to backend unavailability');
     }
   };
   
